@@ -3,7 +3,6 @@ package Main;
 import AdvanceListener.Advance;
 import Populate.Planet;
 import Populate.ShowVisibleVerify;
-import PopulatedPlanetsButton.PopulatedPlanetsScene;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,13 +12,17 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 
 /*
@@ -72,11 +75,12 @@ public class MainScreen extends Application
     double oilOutput = 0;
     double metalOutput = 0;
     double scienceOutput = 0;
-    boolean homeValue = false;
     Text metalOutputText = new Text();
-    Text oilOutputText = new Text();;
+    Text oilOutputText = new Text();
     Text mineralOutputText = new Text();
+    Text scienceOutputText = new Text();
     String planNamePlusTemp = "ERROR!";
+    ArrayList<Planet> populatedPlanetArrayList = new ArrayList<>();
 
 
 /*    public void restart()
@@ -138,10 +142,63 @@ public class MainScreen extends Application
         storeButton.setMinSize(100, 50);
         homeButton.setMinSize(100, 50);
 //        restartButton.setMinSize(100, 50);
-        PopulatedPlanetsScene populatedPlanetsScene =
-                new PopulatedPlanetsScene(this, homeButton, stage,
-                        scene, homeValue);
-        homeButton.setOnAction(populatedPlanetsScene);
+
+
+        homeButton.setOnAction(event->
+        {
+            BorderPane borderPanePopulateScene = new BorderPane();
+            Scene newScene = new Scene(borderPanePopulateScene);
+            borderPanePopulateScene.setPrefSize(1100, 600);
+            stage.setScene(newScene);
+
+            // Navigation buttons (structured with HBox)
+            HBox navHBoxPopulateScene = new HBox();
+            navHBoxPopulateScene.setSpacing(20);
+            navHBoxPopulateScene.setPadding(new Insets(20));
+            navHBoxPopulateScene.setAlignment(Pos.TOP_CENTER);
+
+            Button homeButtonPopulateScene = new Button("Minerals");
+            Button storeButtonPopulateScene = new Button("Store");
+            Button planetButton = new Button("Home");
+            homeButtonPopulateScene.setMinSize(100, 50);
+            storeButtonPopulateScene.setMinSize(100, 50);
+            planetButton.setMinSize(100, 50);
+
+            navHBoxPopulateScene.getChildren().addAll(homeButtonPopulateScene, storeButtonPopulateScene, planetButton);
+
+
+            HBox planetsVBoxHolder = new HBox();
+            planetsVBoxHolder.setPadding(new Insets(50, 0, 0, 270));
+            planetsVBoxHolder.setSpacing(250);
+
+            VBox planetsVboxLeftRow = new VBox();
+            VBox planetsVboxRightRow = new VBox();
+            planetsVBoxHolder.getChildren().addAll(planetsVboxLeftRow,
+                    planetsVboxRightRow);
+
+            ArrayList<Text> planetsToStringTexts = new ArrayList<>();
+
+            for(int i = 0; i < populatedPlanetArrayList.size(); i++)
+            {
+                Text text = new Text(populatedPlanetArrayList.get(i).toString());
+                text.setFont(Font.font("Arial", 16));
+                planetsToStringTexts.add(text);
+                if(i % 2 == 0)
+                {
+                    planetsVboxLeftRow.getChildren().add(planetsToStringTexts.get(i));
+                }
+                if(i % 2 != 0)
+                {
+                    planetsVboxRightRow.getChildren().add(planetsToStringTexts.get(i));
+                }
+            }
+
+            borderPanePopulateScene.setTop(navHBoxPopulateScene);
+            borderPanePopulateScene.setCenter(planetsVBoxHolder);
+
+            planetButton.setOnAction(actionEvent-> stage.setScene(scene));
+
+        });
 
 
         navHBox.getChildren().addAll(mineralButton, storeButton, homeButton/*,
@@ -206,16 +263,19 @@ public class MainScreen extends Application
         material.setPadding(new Insets(0, 20, 0, 20));
         Button populate = new Button("Populate planet");
         Text populateCantText = new Text("You cannot populate this planet");
+        Text alreadyPopulatedText = new Text("You have already populated this" +
+                " planet");
 
         Button mine = new Button("Mine out planet");
         populate.setVisible(false);
         populateCantText.setVisible(false);
         mine.setVisible(false);
+        alreadyPopulatedText.setVisible(false);
 
         StackPane populateStackPane = new StackPane();
         populateStackPane.setAlignment(Pos.CENTER_LEFT);
 
-        populateStackPane.getChildren().addAll(populate, populateCantText);
+        populateStackPane.getChildren().addAll(populate, populateCantText, alreadyPopulatedText);
 
         infoBox.getChildren().addAll(infoText, lineSeparate, planetType,
                 material, populateStackPane, mine);
@@ -350,6 +410,12 @@ public class MainScreen extends Application
 
         Text successPopulateText = new Text("You have successfully populated " + planNamePlusTemp);
         Button okSuccessPopulatedButton = new Button("Ok");
+        okSuccessPopulatedButton.setOnAction(event->
+        {
+            successPopulated.setVisible(false);
+            occupiedSpace.set(false);
+        });
+
         okSuccessPopulatedButton.setMinSize(90, 20);
 
         successPopulated.add(successPopulateText, 0, 0);
@@ -363,18 +429,19 @@ public class MainScreen extends Application
         materailsCenterVBox.setBackground(Background.fill(Color.rgb(244,
                 244, 244)));
 
+
         mineralOutputText = new Text("Mineral output " + mineralOutput + "\n");
         oilOutputText = new Text("Oil output " + oilOutput + "\n");
         metalOutputText = new Text("Metal output " + metalOutput + "\n");
-        Text scienceOutputText =
-                new Text("Science output " + scienceOutput);
+        scienceOutputText = new Text("Science output " + scienceOutput);
+
 
 
         materailsCenterVBox.getChildren().addAll(mineralOutputText,
                 oilOutputText, metalOutputText, scienceOutputText);
 
 
-        // Continue advance popup (for when you are at a planet and you try
+        // Continue advance popup (for when you are at a planet, and you try
         // to leave
         GridPane continueAdvance = new GridPane();
         continueAdvance.setVisible(false);
@@ -400,10 +467,11 @@ public class MainScreen extends Application
             continueAdvance.setVisible(false);
             currentPlanet = null;
             infoText.setText("Nothing new to see here");
-            populate.setVisible(false);
             mine.setVisible(false);
             advanceButton.fire();
             occupiedSpace.set(false);
+            alreadyPopulatedText.setVisible(false);
+            populate.setVisible(false);
         });
 
         Button continueAdvanceNo = new Button("Close");
@@ -443,7 +511,7 @@ public class MainScreen extends Application
                 if (currentPlanet == null)
                 {
                     advance.handle(event);
-
+                    alreadyPopulatedText.setVisible(false);
                     // Update the distance label
                     distanceText.setText(distance.get() + " " + unitsFromEarth + " from Earth");
                     shipFuelText.setText("Fuel: " + shipFuel);
@@ -456,7 +524,7 @@ public class MainScreen extends Application
                                 currentPlanet.getTemperature() + "°F" +
                                 "\nBreathable air: " +
                                 currentPlanet.isAir() + "\nSize: " + currentPlanet.getSize() +
-                                " (" + currentPlanet.getSizeSize() + " planet)" +
+                                " (" + currentPlanet.getdescriptiveTextSize() + " planet)" +
                                 "\nHabitable:" +
                                 " " + currentPlanet.isHabitable());
                         material.setText("Material on planet: " + currentPlanet.getMaterials()[1]);
@@ -484,11 +552,12 @@ public class MainScreen extends Application
             {
                 /*Further code on populate button whether the planet can
                 actually be populated*/
-                if (currentPlanet.isHabitable())
+                if (currentPlanet.isHabitable() && !currentPlanet.getPopulated())
                 {
                     populate.setVisible(true);
                     populateCantText.setVisible(false);
-                } else
+                }
+                if (!currentPlanet.isHabitable())
                 {
                     populateCantText.setVisible(true);
                 }
@@ -507,125 +576,86 @@ public class MainScreen extends Application
             {
                 this.currentPlanet.setPopulated(true);  /*Turns the planets populated status
              to true*/
+                populatedPlanetArrayList.addLast(this.currentPlanet);
 
                 String[] planetMaterial = this.currentPlanet.getMaterials();
 
-                System.out.println(this.currentPlanet.getSizeSize()); //
+                System.out.println(this.currentPlanet.getdescriptiveTextSize()); //
                 // remove before flight (testing size)
 
                 switch(planetMaterial[1])
                 {
                     case "Metal":
-                        if(Objects.equals(this.currentPlanet.getSizeSize(), "dwarf"))
+                        switch(this.currentPlanet.getdescriptiveTextSize())
                         {
-                            metalOutput += 1;
-                            System.out.println("Metal 1");
+                            case "dwarf":
+                                metalOutput += 1;
+                                System.out.println("Metal 1");
+                                break;
+                            case "small":
+                                metalOutput += 2;
+                                System.out.println("Metal 2");
+                                break;
+                            case "large":
+                                metalOutput += 4;
+                                System.out.println("Metal 4");
+                                break;
+                            case "super-giant":
+                                metalOutput += 6;
+                                System.out.println("Metal 6");
+                                break;
                         }
-                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "small"))
-                        {
-                            metalOutput += 2;
-                            System.out.println("Metal 2");
-
-                        }
-                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "medium"))
-                        {
-                            metalOutput += 3;
-                            System.out.println("Metal 3");
-
-                        }
-                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "large"))
-                        {
-                            metalOutput += 4;
-                            System.out.println("Metal 4");
-
-                        }
-                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "super-giant"))
-                        {
-                            metalOutput += 6;
-                            System.out.println("Metal 6");
-
-
-                        }
-                        else
-                        {
-                            System.out.println("ERROR! YOU'VE GOT A BUG!");
-                        };
                         break;
                     case "Oil":
-                        if(Objects.equals(currentPlanet.getSizeSize(), "dwarf"))
+                        switch(this.currentPlanet.getdescriptiveTextSize())
                         {
-                            oilOutput += 1;
-                            System.out.println("Oil 1");
-
+                            case "dwarf":
+                                oilOutput += 1;
+                                System.out.println("Oil 1");
+                                break;
+                            case "small":
+                                oilOutput += 2;
+                                System.out.println("Oil 2");
+                                break;
+                            case "large":
+                                oilOutput += 4;
+                                System.out.println("Oil 4");
+                                break;
+                            case "super-giant":
+                                oilOutput += 6;
+                                System.out.println("Oil 6");
+                                break;
                         }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "small"))
-                        {
-                            oilOutput += 2;
-                            System.out.println("Oil 2");
-
-                        }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "medium"))
-                        {
-                            oilOutput += 3;
-                            System.out.println("Oil 3");
-
-                        }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "large"))
-                        {
-                            oilOutput += 4;
-                            System.out.println("Oil 4");
-
-                        }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "super-giant"))
-                        {
-                            oilOutput += 6;
-                            System.out.println("Oil 6");
-
-                        }
-                        else
-                        {
-                            System.out.println("ERROR! YOU'VE GOT A BUG!");
-                        };
                         break;
                     case "Mineral":
-                        if(Objects.equals(currentPlanet.getSizeSize(), "dwarf"))
+                        switch(this.currentPlanet.getdescriptiveTextSize())
                         {
-                            mineralOutput += 1;
-                            System.out.println("Mineral 1");
-
+                            case "dwarf":
+                                mineralOutput += 1;
+                                System.out.println("Mineral 1");
+                                break;
+                            case "small":
+                                mineralOutput += 2;
+                                System.out.println("Mineral 2");
+                                break;
+                            case "large":
+                                mineralOutput += 4;
+                                System.out.println("Mineral 4");
+                                break;
+                            case "super-giant":
+                                mineralOutput += 6;
+                                System.out.println("Mineral 6");
+                                break;
                         }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "small"))
-                        {
-                            mineralOutput += 2;
-                            System.out.println("Mineral 2");
-
-                        }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "medium"))
-                        {
-                            mineralOutput += 3;
-                            System.out.println("Mineral 3");
-
-                        }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "large"))
-                        {
-                            mineralOutput += 4;
-                            System.out.println("Mineral 4");
-
-                        }
-                        else if(Objects.equals(currentPlanet.getSizeSize(), "super" +
-                                "-giant"))
-                        {
-                            mineralOutput += 6;
-                            System.out.println("Mineral 6");
-
-                        }
-                        else
-                        {
-                            System.out.println("ERROR! YOU'VE GOT A BUG!");
-                        }
-
+                        break;
                 }
+                mineralOutputText.setText("Mineral output " + mineralOutput +
+                        "\n");
+                oilOutputText.setText("Oil output " + oilOutput + "\n");
+                metalOutputText.setText("Metal output " + metalOutput + "\n");
                 successPopulated.setVisible(true);
+                populate.setVisible(false);
+                alreadyPopulatedText.setVisible(true);
             }
         });
 

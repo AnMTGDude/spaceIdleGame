@@ -95,7 +95,8 @@ public class Planet
     -200F and above 200F*/
     String size; /* Change before flight (No use at the moment, saving this
     for when the program gets further along */
-    String sizeSize; // Puts size into perspective (small, medium, big)
+    String descriptiveTextSize; // Puts size into perspective (small, medium, 
+    // big)
     String[] materials; /* the materials on the planet. This needs
     work*/
     boolean mined = false;
@@ -133,23 +134,23 @@ public class Planet
         }
         if(sizeInt < 2300)
         {
-            this.sizeSize = "dwarf";
+            this.descriptiveTextSize = "dwarf";
         }
         if(sizeInt < 10000 && sizeInt > 2300)
         {
-            this.sizeSize = "small";
+            this.descriptiveTextSize = "small";
         }
         if(sizeInt > 10000 && sizeInt < 25000)
         {
-            this.sizeSize = "medium";
+            this.descriptiveTextSize = "medium";
         }
         if(sizeInt > 25000 && sizeInt < 190000)
         {
-            this.sizeSize = "large";
+            this.descriptiveTextSize = "large";
         }
         if(sizeInt > 190000)
         {
-            this.sizeSize = "super-giant";
+            this.descriptiveTextSize = "super-giant";
         }
 
         int planetNameInt = (int) (Math.random() * planetList.length);
@@ -188,9 +189,9 @@ public class Planet
         return name;
     }
 
-    public String getSizeSize()
+    public String getdescriptiveTextSize()
     {
-        return sizeSize;
+        return descriptiveTextSize;
     }
 
     public String[] getMaterials()
@@ -211,5 +212,18 @@ public class Planet
     public boolean getPopulated()
     {
         return populated;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Name: " + name + '\n' +
+                "Habitable: " + habitable + "\n" +
+                "Air: " + air + "\n" +
+                "Temperature: " + temperature + "°F" + "\n" +
+                "Size: " + size + '\n' +
+                "Size classification: " + descriptiveTextSize + '\n' +
+                "Materials: " + getMaterials()[1] + "\n" +
+                "Planet type: " + planetType;
     }
 }
