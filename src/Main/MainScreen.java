@@ -1,0 +1,669 @@
+package Main;
+
+import AdvanceListener.Advance;
+import Populate.Planet;
+import Populate.ShowVisibleVerify;
+import PopulatedPlanetsButton.PopulatedPlanetsScene;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.scene.control.Button;
+
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+
+/*
+TO-DO NEXT:
+    REMOVE CENTER STACK PANE WITH NO PLANETS POPULATED AND CREATE A PLANET'S TAB
+
+Idea:
+    -You're a space captain exploring the galaxy and populating planets.
+    -Each click is one ____ (unit of distance (gets bigger every time))that
+    your spaceship travels
+    -You can upgrade your ship by stopping at planets and collecting
+    resources there as well as refuel your ship
+    -If you run out of fuel you have to call the United-Earth space rescue
+    team to come save you, which costs you a certain amount of money
+    -You can make money by creating settlements, which cost a certain amount
+    of resources per turn to create as well as clicks to create the
+    settlement based on how big the world is.
+    -If you collect resources at a planet you cannot populate it because you
+    dry it out
+    -Each settlement generates a certain amount of something, based on what
+    planet the settlement is on, such minerals, oils, science, metal
+
+Implementation:
+    -Classes:
+        -Planet:
+            -Size, int
+            -Material, String
+            -Populated, boolean
+ */
+
+/**
+ * Main class, this is where the clicker is
+ */
+public class MainScreen extends Application
+{
+    // Variables *section*
+    AtomicInteger distance = new AtomicInteger(0);
+    String unitsFromEarth = "light years";
+    String errorMessage = "-ERROR, YOU'VE GOT A DARN BUG IN YOUR CODE!";
+    String shipEngine = "Gen II warp-drive";
+    int engineSpeed = 1; // light years
+    String shipHull = "Reinforced steel";
+    String shipWeapons = "Basic ship rounds";
+    double shipFuelStorage = 100.0;
+    double shipFuel = 100.0;
+    Planet currentPlanet = null;
+    GridPane outOfFuelGridPane;
+    AtomicBoolean occupiedSpace = new AtomicBoolean(false);
+    double mineralOutput = 0;
+    double oilOutput = 0;
+    double metalOutput = 0;
+    double scienceOutput = 0;
+    boolean homeValue = false;
+    Text metalOutputText = new Text();
+    Text oilOutputText = new Text();;
+    Text mineralOutputText = new Text();
+    String planNamePlusTemp = "ERROR!";
+
+
+/*    public void restart()
+    {
+        distance = new AtomicInteger(0);
+        unitsFromEarth = "light years";
+        shipEngine = "Gen II warp-drive";
+        engineSpeed = 1; // light years
+        shipHull = "Reinforced steel";
+        shipWeapons = "Basic ship rounds";
+        shipFuelStorage = 100.0;
+        shipFuel = 100.0;
+        currentPlanet = null;
+        occupiedSpace = new AtomicBoolean(false);
+        mineralOutput = 0;
+        oilOutput = 0;
+        metalOutput = 0;
+        scienceOutput = 0;
+        homeValue = false;
+        metalOutputText = new Text();
+        oilOutputText = new Text();;
+        mineralOutputText = new Text();
+    }*/
+
+    // start method main section of code *section*
+    /**
+     * Main code for the Main.MainScreen class
+     * @param stage stage for the game
+     */
+    @Override
+    public void start(Stage stage) throws Exception
+    {
+        BorderPane borderPane = new BorderPane();
+        Scene scene = new Scene(borderPane);
+        stage.setScene(scene);
+        stage.show();
+
+        // Main layout (BorderPane)
+        borderPane.setPrefSize(800, 700);
+
+
+        // Navigation buttons at top of page
+        HBox navHBox = new HBox();
+        navHBox.setSpacing(20);
+        navHBox.setPadding(new Insets(20));
+        borderPane.setTop(navHBox);
+        navHBox.setAlignment(Pos.TOP_CENTER);
+
+        Button mineralButton = new Button("Minerals");
+        Button storeButton = new Button("Store");
+        Button homeButton = new Button("Planets");
+/*
+        Button restartButton = new Button("Restart");
+*/
+ /*       restartButton.setOnAction(event ->
+                restart());*/
+
+        mineralButton.setMinSize(100, 50);
+        storeButton.setMinSize(100, 50);
+        homeButton.setMinSize(100, 50);
+//        restartButton.setMinSize(100, 50);
+        PopulatedPlanetsScene populatedPlanetsScene =
+                new PopulatedPlanetsScene(this, homeButton, stage,
+                        scene, homeValue);
+        homeButton.setOnAction(populatedPlanetsScene);
+
+
+        navHBox.getChildren().addAll(mineralButton, storeButton, homeButton/*,
+                restartButton*/);
+
+
+        // Info about ship on left hand side (under advance button)
+        VBox mainVBox = new VBox();
+        mainVBox.setSpacing(20);
+        mainVBox.setPadding(new Insets(-50, 0, 0, 50));
+        borderPane.setLeft(mainVBox);
+        mainVBox.setAlignment(Pos.CENTER_LEFT);
+        Line newLine = new Line();
+        newLine.setStartX(260);
+        newLine.setEndX(575);
+        Text shipEngineText = new Text("Ship engine: " + shipEngine);
+        Text shipHullText = new Text("Ship hull: " + shipHull);
+        Text shipWeaponsText = new Text("Ship weapons: " + shipWeapons);
+        Text shipFuelStorageText =
+                new Text("Ship fuel storage capacity: " + shipFuelStorage);
+        Text shipFuelText =
+                new Text("Fuel: " + shipFuel);
+
+
+        Label distanceText =
+                new Label(distance.get() + " " + unitsFromEarth + " from Earth");
+        Button advanceButton = new Button("Advance");
+
+        advanceButton.setMinSize(175, 100);
+
+        distanceText.setTranslateX(10);
+        distanceText.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        distanceText.setPadding(new Insets(0, 20, 0, 20));
+        mainVBox.getChildren().addAll(advanceButton, distanceText, newLine,
+                shipEngineText, shipHullText, shipWeaponsText,
+                shipFuelStorageText, shipFuelText);
+
+
+
+
+
+        // Right hand side info (planet info, populate, and mine out)
+        VBox infoBox = new VBox();
+        infoBox.setSpacing(30);
+        infoBox.setPadding(new Insets(-100, 20, 0, 0));
+        infoBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label infoText = new Label("Nothing new to see here");
+        infoText.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        infoText.setPadding(new Insets(0, 20, 0, 20));
+        Line lineSeparate = new Line();
+        lineSeparate.setStartX(260);
+        lineSeparate.setEndX(575);
+        Label planetType = new Label(errorMessage);
+        Label material = new Label(errorMessage);
+        planetType.setVisible(false);
+        material.setVisible(false);
+
+        planetType.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        material.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        planetType.setPadding(new Insets(0, 20, 0, 20));
+        material.setPadding(new Insets(0, 20, 0, 20));
+        Button populate = new Button("Populate planet");
+        Text populateCantText = new Text("You cannot populate this planet");
+
+        Button mine = new Button("Mine out planet");
+        populate.setVisible(false);
+        populateCantText.setVisible(false);
+        mine.setVisible(false);
+
+        StackPane populateStackPane = new StackPane();
+        populateStackPane.setAlignment(Pos.CENTER_LEFT);
+
+        populateStackPane.getChildren().addAll(populate, populateCantText);
+
+        infoBox.getChildren().addAll(infoText, lineSeparate, planetType,
+                material, populateStackPane, mine);
+
+        borderPane.setRight(infoBox);
+
+        // Advance button handler
+        Advance advance = new Advance(distance, engineSpeed,
+                this, shipFuel);
+
+
+        // Pop-ups *section*
+
+        // populate pop-up section
+        StackPane centerStackPane = new StackPane();
+        borderPane.setCenter(centerStackPane);
+
+        GridPane doubleCheck = new GridPane();
+        doubleCheck.setPadding(new Insets(20));
+        doubleCheck.setMaxHeight(170);
+        doubleCheck.setMaxWidth(100);
+        doubleCheck.setVisible(false);
+
+
+        HBox yesNoButtonBox = new HBox();
+        doubleCheck.setBackground(Background.fill(Color.rgb(244, 244, 244)));
+        yesNoButtonBox.setAlignment(Pos.CENTER);
+        yesNoButtonBox.setSpacing(20);
+        yesNoButtonBox.setPadding(new Insets(20));
+
+        Text youSure = new Text("Are you sure you want to populate this " +
+                "planet?\n\t\tThis action is irreversible.");
+        Button xButton = new Button("X");
+        Button yesButton = new Button("Yes, I'm sure");
+        Button noButton = new Button("No, don't populate");
+        yesButton.setMinSize(90, 20);
+        noButton.setMinSize(120, 20);
+
+        ShowVisibleVerify yesShowWarning =
+                new ShowVisibleVerify(doubleCheck, true, occupiedSpace);
+        ShowVisibleVerify noRemoveWarning =
+                new ShowVisibleVerify(doubleCheck, false, occupiedSpace);
+
+
+        populate.setOnAction(yesShowWarning);
+
+        xButton.setOnAction(noRemoveWarning);
+
+        noButton.setOnAction(noRemoveWarning);
+
+        yesNoButtonBox.getChildren().addAll(yesButton, noButton);
+
+        doubleCheck.setBorder(Border.stroke(Paint.valueOf("GREY")));
+
+        doubleCheck.add(xButton, 2, 0);
+        doubleCheck.add(youSure, 1, 1);
+        doubleCheck.add(yesNoButtonBox, 1, 2);
+
+        // mine planet popup
+        GridPane mineOutGridPane = new GridPane();
+        mineOutGridPane.setPadding(new Insets(20));
+        mineOutGridPane.setMaxHeight(130);
+        mineOutGridPane.setVisible(false);
+        mineOutGridPane.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        mineOutGridPane.setBackground(Background.fill(Color.rgb(244,
+                244, 244)));
+
+        Text mineOutSureText = new Text("Are you sure you want to mine out " +
+                "this planet?\nYou cannot revert this action! You will no " +
+                "longer be able to populate this planet!");
+        Button mineYesButton = new Button("Yes, mine planet");
+        Button mineNoButton = new Button("Cancel");
+
+        ShowVisibleVerify YesShowWarningMine =
+                new ShowVisibleVerify(mineOutGridPane, true, occupiedSpace);
+        ShowVisibleVerify NoRemoveWarningMine =
+                new ShowVisibleVerify(mineOutGridPane, false, occupiedSpace);
+        mine.setOnAction(YesShowWarningMine);
+        mineNoButton.setOnAction(NoRemoveWarningMine);
+
+
+        HBox mineHBox = new HBox();
+        mineHBox.setAlignment(Pos.CENTER);
+        mineHBox.setSpacing(20);
+        mineHBox.setPadding(new Insets(20));
+
+        mineHBox.getChildren().addAll(mineYesButton, mineNoButton);
+        mineOutGridPane.add(mineOutSureText, 0, 1);
+        mineOutGridPane.add(mineHBox, 0, 2);
+
+        // Out of fuel popup
+        outOfFuelGridPane = new GridPane();
+        outOfFuelGridPane.setVisible(false);
+        outOfFuelGridPane.setPadding(new Insets(20));
+        outOfFuelGridPane.setMaxHeight(90);
+        outOfFuelGridPane.setMaxWidth(100);
+        outOfFuelGridPane.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        outOfFuelGridPane.setBackground(Background.fill(Color.rgb(244,
+                244, 244)));
+
+
+        HBox outOfFuelHbox = new HBox();
+        outOfFuelHbox.setAlignment(Pos.CENTER);
+        outOfFuelHbox.setSpacing(20);
+        outOfFuelHbox.setPadding(new Insets(20));
+
+
+        Text outOfFuelText = new Text("You are out of fuel! You need to " +
+                "call a rescue team from earth! \n\t\t\t\tThis costs 30 " +
+                "minerals.");
+        Button callThem = new Button("Call a rescue team");
+        Button outOfFuelClose = new Button("Close");
+
+        outOfFuelGridPane.add(outOfFuelText, 0, 1);
+        outOfFuelGridPane.add(outOfFuelHbox, 0, 2);
+        outOfFuelHbox.getChildren().addAll(callThem, outOfFuelClose);
+
+
+        ShowVisibleVerify removeFuelWarning =
+                new ShowVisibleVerify(outOfFuelGridPane, false, occupiedSpace);
+        outOfFuelClose.setOnAction(removeFuelWarning);
+
+
+        //Successfully populated planet popup
+        GridPane successPopulated = new GridPane();
+        successPopulated.setPadding(new Insets(20));
+        successPopulated.setVisible(false);
+
+        successPopulated.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        successPopulated.setBackground(Background.fill(Color.rgb(244,
+                244, 244)));
+
+        Text successPopulateText = new Text("You have successfully populated " + planNamePlusTemp);
+        Button okSuccessPopulatedButton = new Button("Ok");
+        okSuccessPopulatedButton.setMinSize(90, 20);
+
+        successPopulated.add(successPopulateText, 0, 0);
+        successPopulated.add(okSuccessPopulatedButton, 0, 1);
+
+
+        // Center populated planets grid
+        VBox materailsCenterVBox = new VBox();
+        materailsCenterVBox.setPadding(new Insets(10));
+        materailsCenterVBox.setAlignment(Pos.CENTER);
+        materailsCenterVBox.setBackground(Background.fill(Color.rgb(244,
+                244, 244)));
+
+        mineralOutputText = new Text("Mineral output " + mineralOutput + "\n");
+        oilOutputText = new Text("Oil output " + oilOutput + "\n");
+        metalOutputText = new Text("Metal output " + metalOutput + "\n");
+        Text scienceOutputText =
+                new Text("Science output " + scienceOutput);
+
+
+        materailsCenterVBox.getChildren().addAll(mineralOutputText,
+                oilOutputText, metalOutputText, scienceOutputText);
+
+
+        // Continue advance popup (for when you are at a planet and you try
+        // to leave
+        GridPane continueAdvance = new GridPane();
+        continueAdvance.setVisible(false);
+        continueAdvance.setPadding(new Insets(20));
+        continueAdvance.setMaxHeight(90);
+        continueAdvance.setMaxWidth(100);
+        continueAdvance.setBorder(Border.stroke(Paint.valueOf("GREY")));
+        continueAdvance.setBackground(Background.fill(Color.rgb(244,
+                244, 244)));
+
+
+        HBox continueAdvanceHbox = new HBox();
+        continueAdvanceHbox.setAlignment(Pos.CENTER);
+        continueAdvanceHbox.setSpacing(20);
+        continueAdvanceHbox.setPadding(new Insets(20));
+
+
+        Text continueAdvanceText = new Text("You are currently at a planet. " +
+                "Would you like to leave?");
+        Button continueAdvanceYes = new Button("Yes, leave planet");
+        continueAdvanceYes.setOnAction(event ->
+        {
+            continueAdvance.setVisible(false);
+            currentPlanet = null;
+            infoText.setText("Nothing new to see here");
+            populate.setVisible(false);
+            mine.setVisible(false);
+            advanceButton.fire();
+            occupiedSpace.set(false);
+        });
+
+        Button continueAdvanceNo = new Button("Close");
+        continueAdvanceNo.setOnAction(event ->
+        {
+            continueAdvance.setVisible(false);
+            occupiedSpace.set(false);
+
+        });
+
+        continueAdvanceHbox.getChildren().addAll(continueAdvanceYes, continueAdvanceNo);
+
+        continueAdvance.add(continueAdvanceText, 0, 1);
+        continueAdvance.add(continueAdvanceHbox, 0, 2);
+
+        centerStackPane.getChildren().addAll(materailsCenterVBox,
+                doubleCheck, outOfFuelGridPane,
+                mineOutGridPane, continueAdvance, successPopulated);
+
+        // Event listeners *section*
+
+        // Advnace button listener
+        advanceButton.setOnAction(event ->
+        {
+
+            // Creating the planet
+            if (!continueAdvance.isVisible())
+            {
+                if (currentPlanet != null)
+                {
+                    continueAdvance.setVisible(true); /*continueAdvnace is
+                    the gridPane that will show the popup if you are at a
+                    planet and try to leave*/
+                    occupiedSpace.set(true);
+                }
+
+                if (currentPlanet == null)
+                {
+                    advance.handle(event);
+
+                    // Update the distance label
+                    distanceText.setText(distance.get() + " " + unitsFromEarth + " from Earth");
+                    shipFuelText.setText("Fuel: " + shipFuel);
+
+
+                    // Update the infoText label
+                    if (currentPlanet != null)
+                    {
+                        infoText.setText("Arrived at planet: " + currentPlanet.getName() + "\nTemperature: " +
+                                currentPlanet.getTemperature() + "°F" +
+                                "\nBreathable air: " +
+                                currentPlanet.isAir() + "\nSize: " + currentPlanet.getSize() +
+                                " (" + currentPlanet.getSizeSize() + " planet)" +
+                                "\nHabitable:" +
+                                " " + currentPlanet.isHabitable());
+                        material.setText("Material on planet: " + currentPlanet.getMaterials()[1]);
+                        planetType.setText("Planet type: " + currentPlanet.getPlanetType());
+                    }
+                    if (shipFuel <= 0 && currentPlanet == null)
+                    {
+                        outOfFuelGridPane.setVisible(true);
+                        occupiedSpace.set(true);
+                    }
+                }
+            }
+
+            // populate and mine buttons visibility
+            if (currentPlanet == null)
+            {
+                populate.setVisible(false);
+                populateCantText.setVisible(false);
+                mine.setVisible(false);
+                planetType.setVisible(false);
+                material.setVisible(false);
+
+            }
+            if (currentPlanet != null)
+            {
+                /*Further code on populate button whether the planet can
+                actually be populated*/
+                if (currentPlanet.isHabitable())
+                {
+                    populate.setVisible(true);
+                    populateCantText.setVisible(false);
+                } else
+                {
+                    populateCantText.setVisible(true);
+                }
+                mine.setVisible(true);
+                planetType.setVisible(true);
+                material.setVisible(true);
+            }
+        });
+
+        yesButton.setOnAction(event->
+        {
+            doubleCheck.setVisible(false);
+            System.out.println("Entered handler");
+
+            if(this.currentPlanet.isHabitable() && !this.currentPlanet.getPopulated())
+            {
+                this.currentPlanet.setPopulated(true);  /*Turns the planets populated status
+             to true*/
+
+                String[] planetMaterial = this.currentPlanet.getMaterials();
+
+                System.out.println(this.currentPlanet.getSizeSize()); //
+                // remove before flight (testing size)
+
+                switch(planetMaterial[1])
+                {
+                    case "Metal":
+                        if(Objects.equals(this.currentPlanet.getSizeSize(), "dwarf"))
+                        {
+                            metalOutput += 1;
+                            System.out.println("Metal 1");
+                        }
+                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "small"))
+                        {
+                            metalOutput += 2;
+                            System.out.println("Metal 2");
+
+                        }
+                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "medium"))
+                        {
+                            metalOutput += 3;
+                            System.out.println("Metal 3");
+
+                        }
+                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "large"))
+                        {
+                            metalOutput += 4;
+                            System.out.println("Metal 4");
+
+                        }
+                        else if(Objects.equals(this.currentPlanet.getSizeSize(), "super-giant"))
+                        {
+                            metalOutput += 6;
+                            System.out.println("Metal 6");
+
+
+                        }
+                        else
+                        {
+                            System.out.println("ERROR! YOU'VE GOT A BUG!");
+                        };
+                        break;
+                    case "Oil":
+                        if(Objects.equals(currentPlanet.getSizeSize(), "dwarf"))
+                        {
+                            oilOutput += 1;
+                            System.out.println("Oil 1");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "small"))
+                        {
+                            oilOutput += 2;
+                            System.out.println("Oil 2");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "medium"))
+                        {
+                            oilOutput += 3;
+                            System.out.println("Oil 3");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "large"))
+                        {
+                            oilOutput += 4;
+                            System.out.println("Oil 4");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "super-giant"))
+                        {
+                            oilOutput += 6;
+                            System.out.println("Oil 6");
+
+                        }
+                        else
+                        {
+                            System.out.println("ERROR! YOU'VE GOT A BUG!");
+                        };
+                        break;
+                    case "Mineral":
+                        if(Objects.equals(currentPlanet.getSizeSize(), "dwarf"))
+                        {
+                            mineralOutput += 1;
+                            System.out.println("Mineral 1");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "small"))
+                        {
+                            mineralOutput += 2;
+                            System.out.println("Mineral 2");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "medium"))
+                        {
+                            mineralOutput += 3;
+                            System.out.println("Mineral 3");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "large"))
+                        {
+                            mineralOutput += 4;
+                            System.out.println("Mineral 4");
+
+                        }
+                        else if(Objects.equals(currentPlanet.getSizeSize(), "super" +
+                                "-giant"))
+                        {
+                            mineralOutput += 6;
+                            System.out.println("Mineral 6");
+
+                        }
+                        else
+                        {
+                            System.out.println("ERROR! YOU'VE GOT A BUG!");
+                        }
+
+                }
+                successPopulated.setVisible(true);
+            }
+        });
+
+    }
+
+
+
+
+    // Getters and setters *section*
+    public void setCurrentPlanet(Planet newPlanet) {
+        this.currentPlanet = newPlanet;  // Update the current planet
+    }
+
+    public double getShipFuel()
+    {
+        return shipFuel;
+    }
+
+    public void setShipFuel(double newFuel)
+    {
+        shipFuel = newFuel;
+    }
+
+    public GridPane getOutOfFuelGridPane()
+    {
+        return outOfFuelGridPane;
+    }
+
+    public void setPlanNamePlusTemp(String planName)
+    {
+        this.planNamePlusTemp = planName;
+    }
+
+    /**
+     * Standard practice doesn't really do anything
+     */
+    public static void main(String[] args)
+    {
+        launch(args);
+    }
+}
