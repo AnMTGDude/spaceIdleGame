@@ -86,7 +86,7 @@ public class Planet
     };
 
     // Variables
-    String name;
+    String name = "ERROR";
     boolean habitable = false; /* decided based on temp and air*/
     boolean air; /* planet is habitable if the air is true not habitable if
     false. Randomly generated*/
@@ -189,14 +189,14 @@ public class Planet
         return name;
     }
 
-    public String getdescriptiveTextSize()
+    public String getDescriptiveTextSize()
     {
         return descriptiveTextSize;
     }
 
-    public String[] getMaterials()
+    public String getMaterials()
     {
-        return materials;
+        return materials[1];
     }
 
     public String getPlanetType()
@@ -223,7 +223,7 @@ public class Planet
                 "Temperature: " + temperature + "°F" + "\n" +
                 "Size: " + size + '\n' +
                 "Size classification: " + descriptiveTextSize + '\n' +
-                "Materials: " + getMaterials()[1] + "\n" +
+                "Materials: " + getMaterials() + "\n" +
                 "Planet type: " + planetType;
     }
 }

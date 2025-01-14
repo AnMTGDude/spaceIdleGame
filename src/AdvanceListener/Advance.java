@@ -56,7 +56,6 @@ public class Advance implements EventHandler
             {
                 Planet newPlanet = new Planet();
                 mainScreen.setCurrentPlanet(newPlanet);
-                mainScreen.setPlanNamePlusTemp(newPlanet.getName());
             }
 
             System.out.println(randomPlanetInt); // Remove before flight
