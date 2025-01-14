@@ -73,10 +73,13 @@ public class MainScreen extends Application
     Planet currentPlanet = null;
     GridPane outOfFuelGridPane;
     AtomicBoolean occupiedSpace = new AtomicBoolean(false);
-    double mineralOutput = 0;
-    double oilOutput = 0;
-    double metalOutput = 0;
+    int mineralOutput = 0;
+    int oilOutput = 0;
+    int metalOutput = 0;
     double scienceOutput = 0;
+    int totMineral = 0;
+    int totOil = 0;
+    int totMetal = 0;
     Text metalOutputText = new Text();
     Text oilOutputText = new Text();
     Text mineralOutputText = new Text();
@@ -173,6 +176,8 @@ public class MainScreen extends Application
                 navHBoxPopulateScene.getChildren().addAll(homeButtonPopulateScene, storeButtonPopulateScene, planetButton);
 
                 TableView<Planet> table = new TableView<>();
+                table.setPlaceholder(new Label("You have not populated any " +
+                        "planets"));
                 // Planet name column (String)
                 TableColumn<Planet, String> planetNameCol = new TableColumn<>("Planet name");
                 planetNameCol.setCellValueFactory(new PropertyValueFactory<>("name")); // getter: getName()
@@ -460,9 +465,14 @@ public class MainScreen extends Application
                     244, 244)));
 
 
-            mineralOutputText = new Text("Mineral output " + mineralOutput + "\n");
-            oilOutputText = new Text("Oil output " + oilOutput + "\n");
-            metalOutputText = new Text("Metal output " + metalOutput + "\n");
+            mineralOutputText =
+                    new Text("Minerals: " + totMineral + " (" + mineralOutput +
+                    ")\n");
+            oilOutputText = new Text("Oil: " + totOil + " (" + oilOutput + ")" +
+                    "\n");
+            metalOutputText =
+                    new Text("Metal: " + totMetal + " (" + metalOutput +
+                    ")\n");
             scienceOutputText = new Text("Science output " + scienceOutput);
 
 
@@ -524,6 +534,18 @@ public class MainScreen extends Application
             // Advnace button listener
             advanceButton.setOnAction(event ->
             {
+                totMineral += mineralOutput;
+                totOil += oilOutput;
+                totMetal += metalOutput;
+
+                mineralOutputText.setText("Minerals: " + totMineral + " " +
+                        "(" + mineralOutput +
+                        ")\n");
+                oilOutputText.setText("Oil: " + totOil + " (" + oilOutput + ")" +
+                        "\n");
+                metalOutputText.setText("Metal: " + totMetal + " (" + metalOutput +
+                        ")\n");
+                scienceOutputText.setText("Science output " + scienceOutput);
 
                 // Creating the planet
                 if (!continueAdvance.isVisible())
@@ -677,10 +699,15 @@ public class MainScreen extends Application
                             }
                             break;
                     }
-                    mineralOutputText.setText("Mineral output " + mineralOutput +
+                    mineralOutputText.setText("Minerals: " + totMineral + " " +
+                            "(" + mineralOutput +
+                                    ")\n");
+                    oilOutputText.setText("Oil: " + totOil + " (" + oilOutput + ")" +
                             "\n");
-                    oilOutputText.setText("Oil output " + oilOutput + "\n");
-                    metalOutputText.setText("Metal output " + metalOutput + "\n");
+                    metalOutputText.setText("Metal: " + totMetal + " (" + metalOutput +
+                                    ")\n");
+                    scienceOutputText.setText("Science output " + scienceOutput);
+
                     successPopulated.setVisible(true);
                     populate.setVisible(false);
                     alreadyPopulatedText.setVisible(true);
