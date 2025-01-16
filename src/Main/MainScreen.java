@@ -64,10 +64,18 @@ public class MainScreen extends Application
     AtomicInteger distance = new AtomicInteger(0);
     String unitsFromEarth = "light years";
     String errorMessage = "-ERROR, YOU'VE GOT A DARN BUG IN YOUR CODE!";
-    String shipEngine = "Gen II warp-drive";
+    String[] shipEngine = {"Gen II warp-drive", "Gen III warp-drive", "Gen IV" +
+            " warp-drive", "Gen V warp-drive", "Dark matter propulsion drive"
+            , "Wormhole drive", "Blackhole warmhole engine"};
     int engineSpeed = 1; // light years
-    String shipHull = "Reinforced steel";
-    String shipWeapons = "Basic ship rounds";
+    String[] shipHull = {"Reinforced steel", "Double-reinforced steel",
+            "Reinforced titanium", "Double-reinforced titanium"};
+    int shipHullPoints = 1;
+    String[] shipWeapons = {"Basic ship rounds", "High-caliber ship rounds",
+            "Modern ship rounds", "Advanced ship rounds", "Crude phasers",
+            "Low-powered phasers", "High-powered phasers", "Dark-matter " +
+            "phasers"};
+    int shipWeaponPoints = 1;
     double shipFuelStorage = 100.0;
     double shipFuel = 100.0;
     Planet currentPlanet = null;
@@ -85,6 +93,8 @@ public class MainScreen extends Application
     Text mineralOutputText = new Text();
     Text scienceOutputText = new Text();
     ArrayList<Planet> populatedPlanetArrayList = new ArrayList<>();
+
+
 
 
 /*    public void restart()
@@ -126,6 +136,11 @@ public class MainScreen extends Application
             Scene scene = new Scene(borderPane);
             stage.setScene(scene);
             stage.show();
+            ShopScene shopScene = new ShopScene(shipEngine, engineSpeed, shipHull,
+                    shipHullPoints, shipWeapons, shipWeaponPoints, stage,
+                    scene, populatedPlanetArrayList);
+            PlanetsScene planetsScene = new PlanetsScene(stage, scene,
+                    shopScene, populatedPlanetArrayList);
 
             // Main layout (BorderPane)
             borderPane.setPrefSize(800, 700);
@@ -140,7 +155,9 @@ public class MainScreen extends Application
 
             Button mineralButton = new Button("Minerals");
             Button storeButton = new Button("Store");
-            Button homeButton = new Button("Planets");
+            storeButton.setOnAction(shopScene);
+            Button planetButton = new Button("Planets");
+            planetButton.setOnAction(planetsScene);
 /*
         Button restartButton = new Button("Restart");
 */
@@ -149,93 +166,11 @@ public class MainScreen extends Application
 
             mineralButton.setMinSize(100, 50);
             storeButton.setMinSize(100, 50);
-            homeButton.setMinSize(100, 50);
+            planetButton.setMinSize(100, 50);
 //        restartButton.setMinSize(100, 50);
 
 
-            homeButton.setOnAction(event ->
-            {
-                BorderPane borderPanePopulateScene = new BorderPane();
-                Scene newScene = new Scene(borderPanePopulateScene);
-                borderPanePopulateScene.setPrefSize(1100, 600);
-                stage.setScene(newScene);
-
-                // Navigation buttons (structured with HBox)
-                HBox navHBoxPopulateScene = new HBox();
-                navHBoxPopulateScene.setSpacing(20);
-                navHBoxPopulateScene.setPadding(new Insets(20));
-                navHBoxPopulateScene.setAlignment(Pos.TOP_CENTER);
-
-                Button homeButtonPopulateScene = new Button("Minerals");
-                Button storeButtonPopulateScene = new Button("Store");
-                Button planetButton = new Button("Home");
-                homeButtonPopulateScene.setMinSize(100, 50);
-                storeButtonPopulateScene.setMinSize(100, 50);
-                planetButton.setMinSize(100, 50);
-
-                navHBoxPopulateScene.getChildren().addAll(homeButtonPopulateScene, storeButtonPopulateScene, planetButton);
-
-                TableView<Planet> table = new TableView<>();
-                table.setPlaceholder(new Label("You have not populated any " +
-                        "planets"));
-                // Planet name column (String)
-                TableColumn<Planet, String> planetNameCol = new TableColumn<>("Planet name");
-                planetNameCol.setCellValueFactory(new PropertyValueFactory<>("name")); // getter: getName()
-
-                // Habitable column (Boolean)
-                TableColumn<Planet, Boolean> planetHabitateCol = new TableColumn<>("Habitable");
-                planetHabitateCol.setCellValueFactory(new PropertyValueFactory<>("habitable")); // getter: isHabitable()
-
-                // Air column (Boolean)
-                TableColumn<Planet, Boolean> planetAirCol = new TableColumn<>("Air");
-                planetAirCol.setCellValueFactory(new PropertyValueFactory<>("air")); // getter: isAir()
-
-                // Temperature column (Integer)
-                TableColumn<Planet, Integer> planetTempCol = new TableColumn<>("Temperature");
-                planetTempCol.setCellValueFactory(new PropertyValueFactory<>("temperature")); // getter: getTemperature()
-
-                // Planet size column (String)
-                TableColumn<Planet, String> planetSizeCol = new TableColumn<>("Planet size");
-                planetSizeCol.setCellValueFactory(new PropertyValueFactory<>("size")); // getter: getSize()
-
-                // Size classification column (String)
-                TableColumn<Planet, String> planetSizeClassCol = new TableColumn<>("Size classification");
-                planetSizeClassCol.setCellValueFactory(new PropertyValueFactory<>("descriptiveTextSize")); // getter: getDescriptiveTextSize()
-
-                // Planet type column (String)
-                TableColumn<Planet, String> planetTypeCol =
-                        new TableColumn<>("Type");
-                planetTypeCol.setCellValueFactory(new PropertyValueFactory<>(
-                        "planetType"));
-
-                // Material column (String) - Convert String[] to String
-                TableColumn<Planet, String> planetMaterialCol = new TableColumn<>("Material");
-                planetMaterialCol.setCellValueFactory(cellData -> {
-                    Planet planet = cellData.getValue();
-                    return new SimpleStringProperty(String.join(", ", planet.getMaterials())); // Convert array to comma-separated string
-                });
-
-                table.getColumns().addAll(planetNameCol, planetHabitateCol,
-                        planetAirCol, planetTempCol, planetSizeCol,
-                        planetSizeClassCol, planetMaterialCol, planetTypeCol);
-
-                table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-                for(int i = 0; i < populatedPlanetArrayList.size(); i++)
-                {
-                    Planet planetForForLoop = populatedPlanetArrayList.get(i);
-                    table.getItems().add(planetForForLoop);
-                }
-
-                borderPanePopulateScene.setCenter(table);
-                borderPanePopulateScene.setTop(navHBoxPopulateScene);
-
-                planetButton.setOnAction(actionEvent -> stage.setScene(scene));
-
-            });
-
-
-            navHBox.getChildren().addAll(mineralButton, storeButton, homeButton/*,
+            navHBox.getChildren().addAll(mineralButton, storeButton, planetButton/*,
                 restartButton*/);
 
 
@@ -248,9 +183,9 @@ public class MainScreen extends Application
             Line newLine = new Line();
             newLine.setStartX(260);
             newLine.setEndX(575);
-            Text shipEngineText = new Text("Ship engine: " + shipEngine);
-            Text shipHullText = new Text("Ship hull: " + shipHull);
-            Text shipWeaponsText = new Text("Ship weapons: " + shipWeapons);
+            Text shipEngineText = new Text("Ship engine: " + shipEngine[0]);
+            Text shipHullText = new Text("Ship hull: " + shipHull[0]);
+            Text shipWeaponsText = new Text("Ship weapons: " + shipWeapons[0]);
             Text shipFuelStorageText =
                     new Text("Ship fuel storage capacity: " + shipFuelStorage);
             Text shipFuelText =
@@ -503,6 +438,9 @@ public class MainScreen extends Application
             Button continueAdvanceYes = new Button("Yes, leave planet");
             continueAdvanceYes.setOnAction(event ->
             {
+                totMineral += mineralOutput;
+                totOil += oilOutput;
+                totMetal += metalOutput;
                 continueAdvance.setVisible(false);
                 currentPlanet = null;
                 infoText.setText("Nothing new to see here");
@@ -534,9 +472,7 @@ public class MainScreen extends Application
             // Advnace button listener
             advanceButton.setOnAction(event ->
             {
-                totMineral += mineralOutput;
-                totOil += oilOutput;
-                totMetal += metalOutput;
+
 
                 mineralOutputText.setText("Minerals: " + totMineral + " " +
                         "(" + mineralOutput +
@@ -560,6 +496,9 @@ public class MainScreen extends Application
 
                     if (currentPlanet == null)
                     {
+                        totMineral += mineralOutput;
+                        totOil += oilOutput;
+                        totMetal += metalOutput;
                         advance.handle(event);
                         alreadyPopulatedText.setVisible(false);
                         // Update the distance label
