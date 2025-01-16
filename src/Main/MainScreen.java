@@ -133,6 +133,7 @@ public class MainScreen extends Application
         public void start(Stage stage) throws Exception
         {
             BorderPane borderPane = new BorderPane();
+            borderPane.setPrefSize(1100, 600);
             Scene scene = new Scene(borderPane);
             stage.setScene(scene);
             stage.show();
