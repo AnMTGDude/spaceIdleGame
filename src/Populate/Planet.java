@@ -5,7 +5,8 @@ import Materials.Materials;
 import java.util.Random;
 
 /**
- * Creates a planet when the user discovers it
+ * Planet class that has a chance of being created when user clicks advance
+ * button
  */
 public class Planet
 {

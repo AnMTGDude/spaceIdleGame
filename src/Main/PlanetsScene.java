@@ -18,6 +18,9 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * Changes scene when clicking planets nav button
+ */
 public class PlanetsScene implements EventHandler
 {
     Stage stage;

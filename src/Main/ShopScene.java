@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 /**
- * Where the shop is
+ * Changes scene when clicking shop nav button
  */
 public class ShopScene implements EventHandler
 {
