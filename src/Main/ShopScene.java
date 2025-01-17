@@ -1,7 +1,6 @@
 package Main;
 
 import Populate.Planet;
-import javafx.application.Application;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -64,10 +63,7 @@ public class ShopScene implements EventHandler
 
         Button mineralButtonStoreScene = new Button("Minerals");
         Button homeButtonStoreScene = new Button("Home");
-        homeButtonStoreScene.setOnAction(actionEvent->
-        {
-            stage.setScene(scene);
-        });
+        homeButtonStoreScene.setOnAction(actionEvent-> stage.setScene(scene));
 
         Button planetButtonStoreScene = new Button("Planets");
         planetButtonStoreScene.setOnAction(planetsScene);

@@ -2,12 +2,10 @@ package Materials;
 
 public class Materials
 {
-    String type; // Can be science, metal, mineral, and oil
     static String[] metal = new String[]{"0", "Metal"};
     static String[] oil = new String[]{"0", "Oil"};
     static String[] mineral = new String[]{"0", "Mineral"};
     static String[] science = new String[]{"0", "Science"};
-    static String amount;
 
     public static String[] getRandom()
     {

@@ -556,7 +556,7 @@ public class MainScreen extends Application
                     String tempPlanName = currentPlanet.getName();
                     planetTextField.setText(tempPlanName);
 
-                    if (currentPlanet.isHabitable() && !currentPlanet.getPopulated())
+                    if (currentPlanet.isHabitable() && currentPlanet.getPopulated())
                     {
                         populate.setVisible(true);
                         populateCantText.setVisible(false);
@@ -576,7 +576,7 @@ public class MainScreen extends Application
                 doubleCheck.setVisible(false);
                 System.out.println("Entered handler");
 
-                if (this.currentPlanet.isHabitable() && !this.currentPlanet.getPopulated())
+                if (this.currentPlanet.isHabitable() && this.currentPlanet.getPopulated())
                 {
                     this.currentPlanet.setPopulated(true);  /*Turns the planets populated status
              to true*/

@@ -107,11 +107,10 @@ public class PlanetsScene implements EventHandler
                 planetAirCol, planetTempCol, planetSizeCol,
                 planetSizeClassCol, planetMaterialCol, planetTypeCol);
 
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
 
-        for(int i = 0; i < populatedPlanetArrayList.size(); i++)
+        for (Planet planetForForLoop : populatedPlanetArrayList)
         {
-            Planet planetForForLoop = populatedPlanetArrayList.get(i);
             table.getItems().add(planetForForLoop);
         }
 

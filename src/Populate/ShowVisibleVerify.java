@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ShowVisibleVerify implements EventHandler
 {
-    private GridPane gridPane;
+    private final GridPane gridPane;
     boolean bool;
     AtomicBoolean occupiedSpace;
 

@@ -87,7 +87,7 @@ public class Planet
     };
 
     // Variables
-    String name = "ERROR";
+    String name;
     boolean habitable = false; /* decided based on temp and air*/
     boolean air; /* planet is habitable if the air is true not habitable if
     false. Randomly generated*/
@@ -96,11 +96,11 @@ public class Planet
     -200F and above 200F*/
     String size; /* Change before flight (No use at the moment, saving this
     for when the program gets further along */
-    String descriptiveTextSize; // Puts size into perspective (small, medium, 
-    // big)
+    String descriptiveTextSize; /* Puts size into perspective (small, medium,
+    big)*/
     String[] materials; /* the materials on the planet. This needs
     work*/
-    boolean mined = false;
+//    boolean mined = false; unused at the moment
     String planetType;
     boolean populated = false;
 
@@ -111,14 +111,7 @@ public class Planet
     {
         // Creates two numbers 0 and 1 and if it's 0 the air is breathable
         int airRandomInt = (int) (Math.random() * 1);
-        if(airRandomInt == 0)
-        {
-            this.air = true;
-        }
-        else
-        {
-            this.air = false;
-        }
+        this.air = airRandomInt == 0;
 
         // Generates a random temperature between -400 and 400
         int temperatureInt = new Random().nextInt((400 + 400)) - 400;
@@ -217,7 +210,7 @@ public class Planet
 
     public boolean getPopulated()
     {
-        return populated;
+        return !populated;
     }
 
     @Override

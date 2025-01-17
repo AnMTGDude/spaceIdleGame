@@ -2,11 +2,8 @@ package AdvanceListener;
 
 import Main.MainScreen;
 import Populate.Planet;
-import Populate.ShowVisibleVerify;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,10 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Advance implements EventHandler
 {
     // Variables
-    private AtomicInteger unit; // current light-years away from earth
-    private int engineSpeed; // engineSpeed
-    private MainScreen mainScreen;
-    private double fuel;
+    private final AtomicInteger unit; // current light-years away from earth
+    private final int engineSpeed; // engineSpeed
+    private final MainScreen mainScreen;
 
     /**
      * Constructor for the advance class
@@ -33,7 +29,6 @@ public class Advance implements EventHandler
         this.unit = unit;
         this.engineSpeed = engineSpeed;
         this.mainScreen = mainScreen;
-        this.fuel = fuel;
     }
 
     /**
