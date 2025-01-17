@@ -4,14 +4,11 @@ import AdvanceListener.Advance;
 import Populate.Planet;
 import Populate.ShowVisibleVerify;
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -96,7 +93,6 @@ public class MainScreen extends Application
 
 
 
-
 /*    public void restart()
     {
         distance = new AtomicInteger(0);
@@ -168,8 +164,6 @@ public class MainScreen extends Application
             mineralButton.setMinSize(100, 50);
             storeButton.setMinSize(100, 50);
             planetButton.setMinSize(100, 50);
-//        restartButton.setMinSize(100, 50);
-
 
             navHBox.getChildren().addAll(mineralButton, storeButton, planetButton/*,
                 restartButton*/);
@@ -379,18 +373,36 @@ public class MainScreen extends Application
                     244, 244)));
 
             Text successPopulateText = new Text("Planet successfully populated");
+            Text renamePlanet = new Text("What would you like to name this " +
+                    "planet?");
+
+
+            TextField planetTextField = new TextField();
             Button okSuccessPopulatedButton = new Button("Ok");
-            okSuccessPopulatedButton.setTranslateX(30);
+            okSuccessPopulatedButton.setTranslateX(60);
+            successPopulateText.setTranslateX(30);
+
             okSuccessPopulatedButton.setOnAction(event ->
             {
                 successPopulated.setVisible(false);
                 occupiedSpace.set(false);
+                String renamePlanetName = planetTextField.getText();
+                currentPlanet.setName(renamePlanetName);
+                infoText.setText("Arrived at planet: " + currentPlanet.getName() + "\nTemperature: " +
+                        currentPlanet.getTemperature() + "°F" +
+                        "\nBreathable air: " +
+                        currentPlanet.isAir() + "\nSize: " + currentPlanet.getSize() +
+                        " (" + currentPlanet.getDescriptiveTextSize() + " planet)" +
+                        "\nHabitable:" +
+                        " " + currentPlanet.isHabitable());
             });
 
             okSuccessPopulatedButton.setMinSize(90, 20);
 
             successPopulated.add(successPopulateText, 0, 0);
-            successPopulated.add(okSuccessPopulatedButton, 0, 1);
+            successPopulated.add(renamePlanet, 0, 1);
+            successPopulated.add(planetTextField, 0, 2);
+            successPopulated.add(okSuccessPopulatedButton, 0, 3);
 
 
             // Center populated planets grid
@@ -536,12 +548,14 @@ public class MainScreen extends Application
                     mine.setVisible(false);
                     planetType.setVisible(false);
                     material.setVisible(false);
-
                 }
                 if (currentPlanet != null)
                 {
                 /*Further code on populate button whether the planet can
                 actually be populated*/
+                    String tempPlanName = currentPlanet.getName();
+                    planetTextField.setText(tempPlanName);
+
                     if (currentPlanet.isHabitable() && !currentPlanet.getPopulated())
                     {
                         populate.setVisible(true);
