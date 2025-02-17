@@ -111,7 +111,7 @@ public class ShopScene implements EventHandler
         upgradeEngine.setMinSize(150, 50);
         upgradeEngine.setOnAction(engineEvent ->
         {
-
+        //TODO: Work on getting this working with the new starship class
             shipEngineText.setText("Ship engine: " + shipEngine[shipEngineCurrentNum]);
         });
 
