@@ -5,7 +5,7 @@ public class Materials
     static String[] metal = new String[]{"0", "Metal"};
     static String[] oil = new String[]{"0", "Oil"};
     static String[] mineral = new String[]{"0", "Mineral"};
-    static String[] science = new String[]{"0", "Science"};
+//    static String[] science = new String[]{"0", "Science"};
 
     public static String[] getRandom()
     {

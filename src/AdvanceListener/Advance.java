@@ -24,7 +24,7 @@ public class Advance implements EventHandler
      *                    advance
      */
     public Advance(AtomicInteger unit, int engineSpeed,
-                   MainScreen mainScreen, double fuel)
+                   MainScreen mainScreen)
     {
         this.unit = unit;
         this.engineSpeed = engineSpeed;
