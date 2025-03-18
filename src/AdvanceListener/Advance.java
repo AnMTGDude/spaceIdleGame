@@ -1,7 +1,7 @@
 package AdvanceListener;
 
 import Main.MainScreen;
-import Starship.Starship;
+import Main.Starship;
 import Populate.Planet;
 import javafx.event.Event;
 import javafx.event.EventHandler;

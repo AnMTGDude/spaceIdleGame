@@ -3,7 +3,6 @@ package Main;
 import AdvanceListener.Advance;
 import Populate.Planet;
 import Populate.ShowVisibleVerify;
-import Starship.Starship;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,8 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /*
-TO-DO NEXT:
-    REMOVE CENTER STACK PANE WITH NO PLANETS POPULATED AND CREATE A PLANET'S TAB
+USING: JAVA, JAVAfx
 
 Idea:
     -You're a space captain exploring the galaxy and populating planets.
@@ -41,13 +39,6 @@ Idea:
     dry it out
     -Each settlement generates a certain amount of something, based on what
     planet the settlement is on, such minerals, oils, science, metal
-
-Implementation:
-    -Classes:
-        -Planet:
-            -Size, int
-            -Material, String
-            -Populated, boolean
  */
 
 
@@ -120,13 +111,8 @@ public class MainScreen extends Application
             Scene scene = new Scene(borderPane);
             stage.setScene(scene);
             stage.show();
-            ShopScene shopScene = new ShopScene(starship.getShipEngine(),
-                    starship.getEngineSpeed(), starship.getShipHull(),
-                    starship.getShipHullPoints(), starship.getShipWeapons(),
-                    starship.getShipWeaponPoints(), stage, scene,
-                    populatedPlanetArrayList, starship.getShipEngineCurrentNum(),
-                    starship.getShipHullCurrentNum(), starship.getShipWeaponsCurrentNum(),
-                    starship.getShipFuelStorage());
+            ShopScene shopScene = new ShopScene(stage, scene,
+                    populatedPlanetArrayList, starship);
             PlanetsScene planetsScene = new PlanetsScene(stage, scene,
                     shopScene, populatedPlanetArrayList);
 
@@ -169,6 +155,7 @@ public class MainScreen extends Application
             Line newLine = new Line();
             newLine.setStartX(260);
             newLine.setEndX(575);
+            //TODO: set text here from ShopScene
             Text shipEngineText =
                     new Text("Ship engine: " + starship.getShipEngine()[0]);
             Text shipHullText =

@@ -33,27 +33,26 @@ public class ShopScene implements EventHandler
     int shipHullCurrentNum;
     int shipWeaponsCurrentNum;
     double shipFuelStorage;
+    Starship starship;
 
-    public ShopScene(String[] shipEngine, int engineSpeed, String[] shipHull,
-                     int shipHullPoints, String[] shipWeapons,
-                     int shipWeaponPoints, Stage stage, Scene scene,
+    public ShopScene(Stage stage, Scene scene,
                      ArrayList<Planet> populatedPlanetArrayList,
-                     int shipEngineCurrentNum, int shipHullCurrentNum,
-                     int shipWeaponsCurrentNum, double shipFuelStorage)
+                     Starship starship)
     {
-        this.shipEngine = shipEngine;
-        this.engineSpeed = engineSpeed;
-        this.shipHull = shipHull;
-        this.shipHullPoints = shipHullPoints;
-        this.shipWeapons = shipWeapons;
-        this.shipWeaponPoints = shipWeaponPoints;
+        this.shipEngine = starship.getShipEngine();
+        this.engineSpeed = starship.getEngineSpeed();
+        this.shipHull = starship.getShipHull();
+        this.shipHullPoints = starship.getShipHullPoints();
+        this.shipWeapons = starship.getShipWeapons();
+        this.shipWeaponPoints = starship.getShipWeaponPoints();
         this.stage = stage;
         this.scene = scene;
         this.populatedPlanetArrayList = populatedPlanetArrayList;
-        this.shipEngineCurrentNum = shipEngineCurrentNum;
-        this.shipHullCurrentNum = shipHullCurrentNum;
-        this.shipWeaponsCurrentNum = shipWeaponsCurrentNum;
-        this.shipFuelStorage = shipFuelStorage;
+        this.shipEngineCurrentNum = starship.getShipEngineCurrentNum();
+        this.shipHullCurrentNum = starship.getShipHullCurrentNum();
+        this.shipWeaponsCurrentNum = starship.getShipWeaponsCurrentNum();
+        this.shipFuelStorage = starship.getShipFuelStorage();
+        this.starship = starship;
     }
 
 
@@ -110,10 +109,14 @@ public class ShopScene implements EventHandler
         upgradeEngine.setTranslateX(5);
         upgradeEngine.setMinSize(150, 50);
         upgradeEngine.setOnAction(engineEvent ->
-        {
-        //TODO: Work on getting this working with the new starship class
-            shipEngineText.setText("Ship engine: " + shipEngine[shipEngineCurrentNum]);
-        });
+                {
+                    if(shipEngineCurrentNum < shipEngine.length - 1)
+                    {
+                        shipEngineCurrentNum++;
+                        shipEngineText.setText("Ship engine: " + this.shipEngine[this.shipEngineCurrentNum]);
+                        starship.setShipEngineCurrentNum(this.shipEngineCurrentNum);
+                    }
+                });
 
         Button upgradeHull = new Button("Upgrade");
         upgradeHull.setTranslateY(40);
@@ -121,24 +124,39 @@ public class ShopScene implements EventHandler
         upgradeHull.setMinSize(150, 50);
         upgradeHull.setOnAction(engineEvent ->
         {
-            shipHullCurrentNum++;
-            shipHullText.setText("Ship engine: " + shipHull[shipHullCurrentNum]);
-
+            if(shipHullCurrentNum < shipHull.length - 1)
+            {
+                shipHullCurrentNum++;
+                shipHullText.setText("Ship hull: " + this.shipHull[this.shipHullCurrentNum]);
+                starship.setShipHullCurrentNum(this.shipHullCurrentNum);
+            }
         });
-
 
         Button upgradeWeapon = new Button("Upgrade");
         upgradeWeapon.setTranslateY(40);
         upgradeWeapon.setTranslateX(5);
         upgradeWeapon.setMinSize(150, 50);
-        upgradeWeapon.setOnAction(engineEvent -> shipEngineCurrentNum++);
+        upgradeWeapon.setOnAction(engineEvent ->
+        {
+            if(shipWeaponsCurrentNum < shipWeapons.length - 1)
+            {
+                shipWeaponsCurrentNum++;
+                shipWeaponText.setText("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
+                starship.setShipWeaponsCurrentNum(this.shipWeaponsCurrentNum);
+            }
+        });
 
 
         Button upgradeStorageFuel = new Button("Upgrade");
         upgradeStorageFuel.setTranslateY(40);
         upgradeStorageFuel.setTranslateX(5);
         upgradeStorageFuel.setMinSize(150, 50);
-        upgradeStorageFuel.setOnAction(engineEvent -> shipEngineCurrentNum++);
+        upgradeStorageFuel.setOnAction(engineEvent ->
+        {
+            shipFuelStorage += 20;
+            shipStorageFuelText.setText("Storage fuel capacity: " + shipFuelStorage);
+            starship.setShipFuelStorage(this.shipFuelStorage);
+        });
 
 
         itemsGridPane.add(upgradeEngine, 0, 0);

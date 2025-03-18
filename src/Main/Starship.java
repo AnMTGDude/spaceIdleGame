@@ -1,4 +1,4 @@
-package Starship;
+package Main;
 
 public class Starship
 {
