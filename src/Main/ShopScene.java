@@ -34,10 +34,15 @@ public class ShopScene implements EventHandler
     int shipWeaponsCurrentNum;
     double shipFuelStorage;
     Starship starship;
+    Text shipEngineText;
+    Text shipHullText;
+    Text shipWeaponsText;
+    Text shipFuelStorageText;
+    MainScreen mainScreen;
 
     public ShopScene(Stage stage, Scene scene,
                      ArrayList<Planet> populatedPlanetArrayList,
-                     Starship starship)
+                     Starship starship, MainScreen mainScreen)
     {
         this.shipEngine = starship.getShipEngine();
         this.engineSpeed = starship.getEngineSpeed();
@@ -53,7 +58,14 @@ public class ShopScene implements EventHandler
         this.shipWeaponsCurrentNum = starship.getShipWeaponsCurrentNum();
         this.shipFuelStorage = starship.getShipFuelStorage();
         this.starship = starship;
+        this.mainScreen = mainScreen;
+
+        shipEngineText = new Text("Ship engine: " + this.shipEngine[this.shipEngineCurrentNum]);
+        shipHullText = new Text("Ship hull: " + this.shipHull[this.shipHullCurrentNum]);
+        shipWeaponsText = new Text("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
+        shipFuelStorageText = new Text("Storage fuel capacity: " + shipFuelStorage);
     }
+
 
 
     @Override
@@ -95,16 +107,12 @@ public class ShopScene implements EventHandler
         itemsGridPane.setHgap(30);
 
 
-        Text shipEngineText =
-                new Text("Ship engine: " + this.shipEngine[this.shipEngineCurrentNum]);
-        Text shipHullText =
-                new Text("Ship hull: " + this.shipHull[this.shipHullCurrentNum]);
-        Text shipWeaponText =
-                new Text("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
-        Text  shipStorageFuelText=
-                new Text("Storage fuel capacity: " + shipFuelStorage);
+        mainScreen.setEngineText("Ship engine: " + this.shipEngine[this.shipEngineCurrentNum]);
+        mainScreen.setHullText("Ship hull: " + this.shipHull[this.shipHullCurrentNum]);
+        mainScreen.setWeaponsText("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
+        mainScreen.setFuelStrorageText("Storage fuel capacity: " + shipFuelStorage);
 
-        Button upgradeEngine = new Button("Upgrade");
+        Button upgradeEngine = new Button("Upgrade:");
         upgradeEngine.setTranslateY(40);
         upgradeEngine.setTranslateX(5);
         upgradeEngine.setMinSize(150, 50);
@@ -118,7 +126,7 @@ public class ShopScene implements EventHandler
                     }
                 });
 
-        Button upgradeHull = new Button("Upgrade");
+        Button upgradeHull = new Button("Upgrade:");
         upgradeHull.setTranslateY(40);
         upgradeHull.setTranslateX(5);
         upgradeHull.setMinSize(150, 50);
@@ -132,7 +140,7 @@ public class ShopScene implements EventHandler
             }
         });
 
-        Button upgradeWeapon = new Button("Upgrade");
+        Button upgradeWeapon = new Button("Upgrade:");
         upgradeWeapon.setTranslateY(40);
         upgradeWeapon.setTranslateX(5);
         upgradeWeapon.setMinSize(150, 50);
@@ -141,20 +149,20 @@ public class ShopScene implements EventHandler
             if(shipWeaponsCurrentNum < shipWeapons.length - 1)
             {
                 shipWeaponsCurrentNum++;
-                shipWeaponText.setText("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
+                shipWeaponsText.setText("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
                 starship.setShipWeaponsCurrentNum(this.shipWeaponsCurrentNum);
             }
         });
 
 
-        Button upgradeStorageFuel = new Button("Upgrade");
+        Button upgradeStorageFuel = new Button("Upgrade:");
         upgradeStorageFuel.setTranslateY(40);
         upgradeStorageFuel.setTranslateX(5);
         upgradeStorageFuel.setMinSize(150, 50);
         upgradeStorageFuel.setOnAction(engineEvent ->
         {
             shipFuelStorage += 20;
-            shipStorageFuelText.setText("Storage fuel capacity: " + shipFuelStorage);
+            shipFuelStorageText.setText("Storage fuel capacity: " + shipFuelStorage);
             starship.setShipFuelStorage(this.shipFuelStorage);
         });
 
@@ -166,8 +174,8 @@ public class ShopScene implements EventHandler
 
         itemsGridPane.add(shipEngineText, 0, 0);
         itemsGridPane.add(shipHullText, 0, 1);
-        itemsGridPane.add(shipWeaponText, 1, 0);
-        itemsGridPane.add(shipStorageFuelText, 1, 1);
+        itemsGridPane.add(shipWeaponsText, 1, 0);
+        itemsGridPane.add(shipFuelStorageText, 1, 1);
 
 
 

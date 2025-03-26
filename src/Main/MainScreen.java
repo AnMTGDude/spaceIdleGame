@@ -69,7 +69,11 @@ public class MainScreen extends Application
     Text scienceOutputText = new Text();
     ArrayList<Planet> populatedPlanetArrayList = new ArrayList<>();
     Starship starship = new Starship();
-
+    Text shipEngineText;
+    Text shipHullText;
+    Text shipWeaponsText;
+    Text shipFuelStorageText;
+    Text shipFuelText;
 
 /*    public void restart()
     {
@@ -111,8 +115,21 @@ public class MainScreen extends Application
             Scene scene = new Scene(borderPane);
             stage.setScene(scene);
             stage.show();
+
+            shipEngineText =
+                    new Text("Ship engine: " + starship.getShipEngine()[0]);
+            shipHullText =
+                    new Text("Ship hull: " + starship.getShipHull()[0]);
+            shipWeaponsText =
+                    new Text("Ship weapons: " + starship.getShipWeapons()[0]);
+            shipFuelStorageText =
+                    new Text("Ship fuel storage capacity: " + starship.getShipFuelStorage());
+            shipFuelText =
+                    new Text("Fuel: " + starship.getShipFuel());
+
+
             ShopScene shopScene = new ShopScene(stage, scene,
-                    populatedPlanetArrayList, starship);
+                    populatedPlanetArrayList, starship, this);
             PlanetsScene planetsScene = new PlanetsScene(stage, scene,
                     shopScene, populatedPlanetArrayList);
 
@@ -155,17 +172,6 @@ public class MainScreen extends Application
             Line newLine = new Line();
             newLine.setStartX(260);
             newLine.setEndX(575);
-            //TODO: set text here from ShopScene
-            Text shipEngineText =
-                    new Text("Ship engine: " + starship.getShipEngine()[0]);
-            Text shipHullText =
-                    new Text("Ship hull: " + starship.getShipHull()[0]);
-            Text shipWeaponsText =
-                    new Text("Ship weapons: " + starship.getShipWeapons()[0]);
-            Text shipFuelStorageText =
-                    new Text("Ship fuel storage capacity: " + starship.getShipFuelStorage());
-            Text shipFuelText =
-                    new Text("Fuel: " + starship.getShipFuel());
 
 
             Label distanceText =
@@ -469,8 +475,7 @@ public class MainScreen extends Application
 
 
                 mineralOutputText.setText("Minerals: " + totMineral + " " +
-                        "(" + mineralOutput +
-                        ")\n");
+                        "(" + mineralOutput + ")\n");
                 oilOutputText.setText("Oil: " + totOil + " (" + oilOutput + ")" +
                         "\n");
                 metalOutputText.setText("Metal: " + totMetal + " (" + metalOutput +
@@ -662,4 +667,25 @@ public class MainScreen extends Application
         {
             return outOfFuelGridPane;
         }
+
+        public void setEngineText(String text)
+        {
+            shipEngineText.setText(text);
+        }
+
+
+        public void setHullText(String text)
+        {
+            shipHullText.setText(text);
+        }
+
+    public void setWeaponsText(String text)
+    {
+        shipWeaponsText.setText(text);
+    }
+
+    public void setFuelStrorageText(String text)
+    {
+        shipFuelStorageText.setText(text);
+    }
 }
