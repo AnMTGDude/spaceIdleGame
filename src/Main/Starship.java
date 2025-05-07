@@ -27,9 +27,9 @@ public class Starship
         return shipEngine;
     }
 
-    public void setShipEngine(String[] shipEngine)
+    public String getCurrentUsedShipEngine()
     {
-        this.shipEngine = shipEngine;
+        return shipEngine[shipEngineCurrentNum];
     }
 
     public int getShipEngineCurrentNum()

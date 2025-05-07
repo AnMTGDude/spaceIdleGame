@@ -121,8 +121,10 @@ public class ShopScene implements EventHandler
                     if(shipEngineCurrentNum < shipEngine.length - 1)
                     {
                         shipEngineCurrentNum++;
-                        shipEngineText.setText("Ship engine: " + this.shipEngine[this.shipEngineCurrentNum]);
                         starship.setShipEngineCurrentNum(this.shipEngineCurrentNum);
+                        shipEngineText.setText("Ship engine: " + this.shipEngine[this.shipEngineCurrentNum]);
+                        mainScreen.setEngineText("Ship engine: " + this.shipEngine[this.shipEngineCurrentNum]);
+
                     }
                 });
 
@@ -135,8 +137,9 @@ public class ShopScene implements EventHandler
             if(shipHullCurrentNum < shipHull.length - 1)
             {
                 shipHullCurrentNum++;
-                shipHullText.setText("Ship hull: " + this.shipHull[this.shipHullCurrentNum]);
                 starship.setShipHullCurrentNum(this.shipHullCurrentNum);
+                shipHullText.setText("Ship hull: " + this.shipHull[this.shipHullCurrentNum]);
+                mainScreen.setHullText("Ship hull: " + this.shipHull[this.shipHullCurrentNum]);
             }
         });
 
@@ -149,8 +152,9 @@ public class ShopScene implements EventHandler
             if(shipWeaponsCurrentNum < shipWeapons.length - 1)
             {
                 shipWeaponsCurrentNum++;
-                shipWeaponsText.setText("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
                 starship.setShipWeaponsCurrentNum(this.shipWeaponsCurrentNum);
+                shipWeaponsText.setText("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
+                mainScreen.setWeaponsText("Ship weapons: " + this.shipWeapons[this.shipWeaponsCurrentNum]);
             }
         });
 
@@ -164,6 +168,8 @@ public class ShopScene implements EventHandler
             shipFuelStorage += 20;
             shipFuelStorageText.setText("Storage fuel capacity: " + shipFuelStorage);
             starship.setShipFuelStorage(this.shipFuelStorage);
+            mainScreen.setFuelStrorageText("Storage fuel capacity: " + shipFuelStorage);
+
         });
 
 
