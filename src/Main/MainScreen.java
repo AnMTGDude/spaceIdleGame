@@ -75,30 +75,6 @@ public class MainScreen extends Application
     Text shipFuelStorageText;
     Text shipFuelText;
 
-/*    public void restart()
-    {
-        distance = new AtomicInteger(0);
-        unitsFromEarth = "light years";
-        shipEngine = "Gen II warp-drive";
-        engineSpeed = 1; // light years
-        shipHull = "Reinforced steel";
-        shipWeapons = "Basic ship rounds";
-        shipFuelStorage = 100.0;
-        shipFuel = 100.0;
-        currentPlanet = null;
-        occupiedSpace = new AtomicBoolean(false);
-        mineralOutput = 0;
-        oilOutput = 0;
-        metalOutput = 0;
-        scienceOutput = 0;
-        homeValue = false;
-        metalOutputText = new Text();
-        oilOutputText = new Text();;
-        mineralOutputText = new Text();
-    }*/
-
-
-
 
         // start method main section of code *section*
 
@@ -108,7 +84,7 @@ public class MainScreen extends Application
          * @param stage stage for the game
          */
         @Override
-        public void start(Stage stage) throws Exception
+        public void start(Stage stage)
         {
             BorderPane borderPane = new BorderPane();
             borderPane.setPrefSize(1100, 600);
@@ -149,11 +125,6 @@ public class MainScreen extends Application
             storeButton.setOnAction(shopScene);
             Button planetButton = new Button("Planets");
             planetButton.setOnAction(planetsScene);
-/*
-        Button restartButton = new Button("Restart");
-*/
- /*       restartButton.setOnAction(event ->
-                restart());*/
 
             mineralButton.setMinSize(100, 50);
             storeButton.setMinSize(100, 50);
