@@ -22,8 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /*
-TO-DO NEXT:
-    REMOVE CENTER STACK PANE WITH NO PLANETS POPULATED AND CREATE A PLANET'S TAB
+USING: JAVA, JAVAfx
 
 Idea:
     -You're a space captain exploring the galaxy and populating planets.
@@ -40,13 +39,6 @@ Idea:
     dry it out
     -Each settlement generates a certain amount of something, based on what
     planet the settlement is on, such minerals, oils, science, metal
-
-Implementation:
-    -Classes:
-        -Planet:
-            -Size, int
-            -Material, String
-            -Populated, boolean
  */
 
 
@@ -61,23 +53,6 @@ public class MainScreen extends Application
     AtomicInteger distance = new AtomicInteger(0);
     String unitsFromEarth = "light years";
     String errorMessage = "-ERROR, YOU'VE GOT A DARN BUG IN YOUR CODE!";
-    String[] shipEngine = {"Gen II warp-drive", "Gen III warp-drive", "Gen IV" +
-            " warp-drive", "Gen V warp-drive", "Dark matter propulsion drive"
-            , "Wormhole drive", "Blackhole warmhole engine"};
-    int shipEngineCurrentNum = 0;
-    int engineSpeed = 1; // light years
-    String[] shipHull = {"Reinforced steel", "Double-reinforced steel",
-            "Reinforced titanium", "Double-reinforced titanium"};
-    int shipHullCurrentNum = 0;
-    int shipHullPoints = 1;
-    String[] shipWeapons = {"Basic ship rounds", "High-caliber ship rounds",
-            "Modern ship rounds", "Advanced ship rounds", "Crude phasers",
-            "Low-powered phasers", "High-powered phasers", "Dark-matter " +
-            "phasers"};
-    int shipWeaponsCurrentNum = 0;
-    int shipWeaponPoints = 1;
-    double shipFuelStorage = 100.0;
-    double shipFuel = 100.0;
     Planet currentPlanet = null;
     GridPane outOfFuelGridPane;
     AtomicBoolean occupiedSpace = new AtomicBoolean(false);
@@ -93,8 +68,12 @@ public class MainScreen extends Application
     Text mineralOutputText = new Text();
     Text scienceOutputText = new Text();
     ArrayList<Planet> populatedPlanetArrayList = new ArrayList<>();
-
-
+    Starship starship = new Starship();
+    Text shipEngineText;
+    Text shipHullText;
+    Text shipWeaponsText;
+    Text shipFuelStorageText;
+    Text shipFuelText;
 
 /*    public void restart()
     {
@@ -136,11 +115,21 @@ public class MainScreen extends Application
             Scene scene = new Scene(borderPane);
             stage.setScene(scene);
             stage.show();
-            ShopScene shopScene = new ShopScene(shipEngine, engineSpeed, shipHull,
-                    shipHullPoints, shipWeapons, shipWeaponPoints, stage,
-                    scene, populatedPlanetArrayList, shipEngineCurrentNum,
-                    shipHullCurrentNum, shipWeaponsCurrentNum,
-                    shipFuelStorage);
+
+            shipEngineText =
+                    new Text("Ship engine: " + starship.getShipEngine()[0]);
+            shipHullText =
+                    new Text("Ship hull: " + starship.getShipHull()[0]);
+            shipWeaponsText =
+                    new Text("Ship weapons: " + starship.getShipWeapons()[0]);
+            shipFuelStorageText =
+                    new Text("Ship fuel storage capacity: " + starship.getShipFuelStorage());
+            shipFuelText =
+                    new Text("Fuel: " + starship.getShipFuel());
+
+
+            ShopScene shopScene = new ShopScene(stage, scene,
+                    populatedPlanetArrayList, starship, this);
             PlanetsScene planetsScene = new PlanetsScene(stage, scene,
                     shopScene, populatedPlanetArrayList);
 
@@ -183,13 +172,6 @@ public class MainScreen extends Application
             Line newLine = new Line();
             newLine.setStartX(260);
             newLine.setEndX(575);
-            Text shipEngineText = new Text("Ship engine: " + shipEngine[0]);
-            Text shipHullText = new Text("Ship hull: " + shipHull[0]);
-            Text shipWeaponsText = new Text("Ship weapons: " + shipWeapons[0]);
-            Text shipFuelStorageText =
-                    new Text("Ship fuel storage capacity: " + shipFuelStorage);
-            Text shipFuelText =
-                    new Text("Fuel: " + shipFuel);
 
 
             Label distanceText =
@@ -249,8 +231,8 @@ public class MainScreen extends Application
             borderPane.setRight(infoBox);
 
             // Advance button handler
-            Advance advance = new Advance(distance, engineSpeed,
-                    this);
+            Advance advance = new Advance(distance, starship.getEngineSpeed(),
+                    this, starship);
 
 
             // Pop-ups *section*
@@ -493,8 +475,7 @@ public class MainScreen extends Application
 
 
                 mineralOutputText.setText("Minerals: " + totMineral + " " +
-                        "(" + mineralOutput +
-                        ")\n");
+                        "(" + mineralOutput + ")\n");
                 oilOutputText.setText("Oil: " + totOil + " (" + oilOutput + ")" +
                         "\n");
                 metalOutputText.setText("Metal: " + totMetal + " (" + metalOutput +
@@ -521,7 +502,7 @@ public class MainScreen extends Application
                         alreadyPopulatedText.setVisible(false);
                         // Update the distance label
                         distanceText.setText(distance.get() + " " + unitsFromEarth + " from Earth");
-                        shipFuelText.setText("Fuel: " + shipFuel);
+                        shipFuelText.setText("Fuel: " + starship.getShipFuel());
 
 
                         // Update the infoText label
@@ -537,7 +518,7 @@ public class MainScreen extends Application
                             material.setText("Material on planet: " + currentPlanet.getMaterials());
                             planetType.setText("Planet type: " + currentPlanet.getPlanetType());
                         }
-                        if (shipFuel <= 0 && currentPlanet == null)
+                        if (starship.getShipFuel() <= 0 && currentPlanet == null)
                         {
                             outOfFuelGridPane.setVisible(true);
                             occupiedSpace.set(true);
@@ -682,108 +663,29 @@ public class MainScreen extends Application
             this.currentPlanet = newPlanet;  // Update the current planet
         }
 
-        public double getShipFuel()
-        {
-            return shipFuel;
-        }
-
-        public void setShipFuel(double newFuel)
-        {
-            shipFuel = newFuel;
-        }
-
         public GridPane getOutOfFuelGridPane()
         {
             return outOfFuelGridPane;
         }
 
-    public String[] getShipEngine()
+        public void setEngineText(String text)
+        {
+            shipEngineText.setText(text);
+        }
+
+
+        public void setHullText(String text)
+        {
+            shipHullText.setText(text);
+        }
+
+    public void setWeaponsText(String text)
     {
-        return shipEngine;
+        shipWeaponsText.setText(text);
     }
 
-    public void setShipEngine(String[] shipEngine)
+    public void setFuelStrorageText(String text)
     {
-        this.shipEngine = shipEngine;
-    }
-
-    public int getShipEngineCurrentNum()
-    {
-        return shipEngineCurrentNum;
-    }
-
-    public void setShipEngineCurrentNum(int shipEngineCurrentNum)
-    {
-        this.shipEngineCurrentNum = shipEngineCurrentNum;
-    }
-
-    public int getEngineSpeed()
-    {
-        return engineSpeed;
-    }
-
-    public void setEngineSpeed(int engineSpeed)
-    {
-        this.engineSpeed = engineSpeed;
-    }
-
-    public String[] getShipHull()
-    {
-        return shipHull;
-    }
-
-    public void setShipHull(String[] shipHull)
-    {
-        this.shipHull = shipHull;
-    }
-
-    public int getShipHullCurrentNum()
-    {
-        return shipHullCurrentNum;
-    }
-
-    public void setShipHullCurrentNum(int shipHullCurrentNum)
-    {
-        this.shipHullCurrentNum = shipHullCurrentNum;
-    }
-
-    public int getShipHullPoints()
-    {
-        return shipHullPoints;
-    }
-
-    public void setShipHullPoints(int shipHullPoints)
-    {
-        this.shipHullPoints = shipHullPoints;
-    }
-
-    public String[] getShipWeapons()
-    {
-        return shipWeapons;
-    }
-
-    public void setShipWeapons(String[] shipWeapons)
-    {
-        this.shipWeapons = shipWeapons;
-    }
-
-    public int getShipWeaponsCurrentNum()
-    {
-        return shipWeaponsCurrentNum;
-    }
-
-    public void setShipWeaponsCurrentNum(int shipWeaponsCurrentNum)
-    {
-        this.shipWeaponsCurrentNum = shipWeaponsCurrentNum;
-    }
-
-    public int getShipWeaponPoints()
-    {
-        return shipWeaponPoints;
-    }
-
-    public void setShipWeaponPoints(int shipWeaponPoints)
-    {
-        this.shipWeaponPoints = shipWeaponPoints;
+        shipFuelStorageText.setText(text);
     }
 }

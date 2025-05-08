@@ -1,11 +1,12 @@
 package AdvanceListener;
 
 import Main.MainScreen;
+import Main.Starship;
 import Populate.Planet;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 /**
  * Does a bunch of things when you click the advance button
@@ -16,6 +17,7 @@ public class Advance implements EventHandler
     private final AtomicInteger unit; // current light-years away from earth
     private final int engineSpeed; // engineSpeed
     private final MainScreen mainScreen;
+    Starship starship;
 
     /**
      * Constructor for the advance class
@@ -24,11 +26,12 @@ public class Advance implements EventHandler
      *                    advance
      */
     public Advance(AtomicInteger unit, int engineSpeed,
-                   MainScreen mainScreen)
+                   MainScreen mainScreen, Starship starship)
     {
         this.unit = unit;
         this.engineSpeed = engineSpeed;
         this.mainScreen = mainScreen;
+        this.starship = starship;
     }
 
     /**
@@ -37,12 +40,12 @@ public class Advance implements EventHandler
     @Override
     public void handle(Event event)
     {
-        if(mainScreen.getShipFuel() > 0)
+        if(starship.getShipFuel() > 0)
         {
             unit.getAndAdd(engineSpeed);
-            double currentFuel = mainScreen.getShipFuel();
+            double currentFuel = starship.getShipFuel();
             double newFuel = currentFuel - 5;
-            mainScreen.setShipFuel(newFuel);
+            starship.setShipFuel(newFuel);
 
             // Creates a random int to decide whether you come across a planet
             int randomPlanetInt = (int) (Math.random() * 100);
